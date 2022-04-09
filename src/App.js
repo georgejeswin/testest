@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import "./App.css";
 import * as d3 from "d3";
 import graph from "./data/graph";
+import CircleImg from "./images/circle.png";
 
 function App() {
   const width = 1800,
@@ -62,12 +63,13 @@ function App() {
       .call(d3.drag().on("drag", dragged));
 
     const text = svg
-      .selectAll("text")
+      .selectAll("heading")
       .data(graph.content)
       .enter()
       .append("text")
       .attr("x", (d, i) => d.x + 40)
       .attr("y", (d, i) => d.y + 20)
+      .attr("class", "heading")
       .style("font-size", "11px")
       .style("font-family", "Helvetica")
       .style("font-weight", 800)
@@ -85,7 +87,7 @@ function App() {
       .attr("y", (d, i) => d.y - 2)
       .attr("width", 35)
       .attr("height", 35)
-      .attr("xlink:href", (d) => d.image);
+      .attr("xlink:href", (d) => d?.image);
 
     const googleImg = svg
       .selectAll("googleImg")
@@ -97,7 +99,32 @@ function App() {
       .attr("class", "googleImg")
       .attr("width", 55)
       .attr("height", 55)
-      .attr("href", (d) => d.google);
+      .attr("href", (d) => d?.google);
+
+    const circles = svg
+      .selectAll("circleImg")
+      .data(graph.content)
+      .enter()
+      .append("image")
+      .attr("x", (d, i) => d.x + 100)
+      .attr("y", (d, i) => d.y + 50)
+      .attr("class", "circleImg")
+      .attr("width", 35)
+      .attr("height", 35)
+      .attr("href", (d) => d?.circle?.data);
+
+    const circleText = svg
+      .selectAll("circleText")
+      .data(graph.content)
+      .enter()
+      .append("text")
+      .attr("x", (d, i) => d.x + 100)
+      .attr("y", (d, i) => d.y + 100)
+      .attr("class", "circleText")
+      .style("font-size", "8px")
+      .style("font-family", "Helvetica")
+      .style("font-weight", 400)
+      .text((d) => d?.circle?.circle);
 
     function dragged(event, d) {
       d.x = event.x;
@@ -115,6 +142,15 @@ function App() {
         .filter((t) => t.source === d)
         .attr("x", d.x + 85)
         .attr("y", d.y + 40);
+      circles
+        .filter((t) => t.source === d)
+        .attr("x", d.x + 100)
+        .attr("y", d.y + 50);
+
+      circleText
+        .filter((t) => t.source === d)
+        .attr("x", d.x + 100)
+        .attr("y", d.y + 100);
 
       link
         .filter(function (l) {

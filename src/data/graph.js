@@ -1,6 +1,7 @@
 import GoogleImg from "../images/google.png";
 import BlackIcon from "../images/black.png";
 import GreenIcon from "../images/green.png";
+import CircleImg from "../images/circle.png";
 
 export default {
   nodes: [
@@ -28,6 +29,7 @@ export default {
       y: 500,
       source: 1,
       target: 0,
+      circle: { data: CircleImg, circle: "Q2KN-M" },
     },
     {
       image: GreenIcon,
@@ -36,6 +38,7 @@ export default {
       y: 500,
       source: 2,
       target: 0,
+      circle: { data: CircleImg, circle: "Q2KN-G" },
     },
     {
       image: GreenIcon,
@@ -44,6 +47,7 @@ export default {
       y: 500,
       source: 3,
       target: 0,
+      circle: { data: CircleImg, circle: "Q2KN-G" },
     },
     {
       image: GreenIcon,
@@ -52,6 +56,7 @@ export default {
       y: 500,
       source: 4,
       target: 0,
+      circle: { data: CircleImg, circle: "Q2KN-N" },
     },
     {
       image: GreenIcon,
@@ -60,6 +65,7 @@ export default {
       y: 500,
       source: 5,
       target: 0,
+      circle: { data: CircleImg, circle: "Q2KN-PJ" },
     },
   ],
 };
