@@ -1,3 +1,10 @@
+.svg-container {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-start;
+  padding: 10px;
+}
+
 .node {
   /* stroke: rgb(201, 189, 189); */
   /* stroke-width: 1.5px; */
