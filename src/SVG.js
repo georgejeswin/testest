@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import "./SVG.css";
 import * as d3 from "d3";
-import graph from "./data/graph";
+import Graph from "./data/graph";
 import { useNavigate } from "react-router-dom";
 import Button from "./components/Button";
 
-function SVG() {
-  const width = 1800,
-    height = 900;
+const SVG = () => {
+  const width = 1800;
+  const height = 900;
   const navigate = useNavigate();
   useEffect(() => {
     const username = localStorage.getItem("username");
@@ -17,7 +17,8 @@ function SVG() {
     }
   }, [navigate]);
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem("username");
+    localStorage.removeItem("password");
     navigate("/");
     window.location.reload();
   };
@@ -28,100 +29,147 @@ function SVG() {
       .attr("width", width)
       .attr("height", height);
 
-    graph.content.forEach(function (d) {
-      d.source = graph.nodes[d.source];
-      d.target = graph.nodes[d.target];
+    Graph.content.forEach(function (d) {
+      d.source = Graph.nodes[d.source];
+      d.target = Graph.nodes[d.target];
     });
 
-    // console.log(graph);
-
-    const link = svg
+    let link = svg
       .append("g")
       .attr("class", "link")
       .selectAll("line")
-      .data(graph.content)
+      .data(Graph.content)
       .enter()
       .append("line")
-      .attr("fill", "#DCDCDC")
-      .attr("x1", function (d) {
-        return d.source.x + 70;
+      .attr("transform", "translate(0," - 60 + ")")
+      .attr("id", (d, i) => "rect" + i + ".link")
+      .attr("x1", function (d, i) {
+        return localStorage.getItem(`rect${i}.link.dx1`) !== null
+          ? localStorage.getItem(`rect${i}.link.dx1`)
+          : d.source.x + 70;
       })
-      .attr("y1", function (d) {
-        return d.source.y;
+      .attr("y1", function (d, i) {
+        return localStorage.getItem(`rect${i}.link.dy1`) !== null
+          ? localStorage.getItem(`rect${i}.link.dy1`)
+          : d.source.y;
       })
-      .attr("x2", function (d) {
-        return d.target.x + 50;
+      .attr("x2", function (d, i) {
+        return localStorage.getItem(`rect${i}.link.dx2`) !== null
+          ? localStorage.getItem(`rect${i}.link.dx2`)
+          : d.target.x + 50;
       })
-      .attr("y2", function (d) {
-        return d.target.y + 10;
+      .attr("y2", function (d, i) {
+        return localStorage.getItem(`rect${i}.link.dy2`) !== null
+          ? localStorage.getItem(`rect${i}.link.dy2`)
+          : d.target.y + 10;
       });
 
     svg
       .append("g")
       .attr("class", "node")
       .selectAll("rect")
-      .data(graph.nodes)
+      .data(Graph.nodes)
       .enter()
       .append("rect")
       .attr("class", (d, i) => "rect" + i)
+      .attr("id", (d, i) => "rect" + i)
       .attr("width", "260px")
       .attr("height", "140px")
       .style("fill", "no")
       .style("rx", 6)
-      .attr("x", function (d) {
-        return d.x;
+      .attr("x", function (d, i) {
+        return localStorage.getItem(`rect${i}.rect${i}.dx`) !== null
+          ? localStorage.getItem(`rect${i}.rect${i}.dx`)
+          : d.x;
       })
-      .attr("y", function (d) {
-        return d.y;
+      .attr("y", function (d, i) {
+        return localStorage.getItem(`rect${i}.rect${i}.dy`) !== null
+          ? localStorage.getItem(`rect${i}.rect${i}.dy`)
+          : d.y;
       })
       .call(d3.drag().on("drag", dragged));
 
-    const text = svg
-      .selectAll("heading")
-      .data(graph.content)
+    let text = svg
+      .selectAll("text")
+      .data(Graph.content)
       .enter()
       .append("text")
-      .attr("x", (d, i) => d.x + 40)
-      .attr("y", (d, i) => d.y + 20)
-      .attr("class", "heading")
+      .attr("id", (d, i) => "rect" + i + ".text")
+      .attr("x", (d, i) =>
+        localStorage.getItem(`rect${i}.text.dx`) !== null
+          ? localStorage.getItem(`rect${i}.text.dx`)
+          : d.x + 40
+      )
+      .attr("y", (d, i) =>
+        localStorage.getItem(`rect${i}.text.dy`) !== null
+          ? localStorage.getItem(`rect${i}.text.dy`)
+          : d.y + 20
+      )
       .style("font-size", "11px")
       .style("font-family", "Helvetica")
       .style("font-weight", 800)
       .style("letter-spacing", "1px")
       .text((d) => d.text);
 
-    const icons = svg
+    let icons = svg
       .selectAll("icons")
-      .data(graph.content)
+      .data(Graph.content)
       .enter()
       .append("a")
       .append("image")
       .attr("class", "icons")
-      .attr("x", (d, i) => d.x + 2)
-      .attr("y", (d, i) => d.y - 2)
+      .attr("id", (d, i) => "rect" + i + ".icons")
+      .attr("x", (d, i) =>
+        localStorage.getItem(`rect${i}.icons.dx`) !== null
+          ? localStorage.getItem(`rect${i}.icons.dx`)
+          : d.x + 2
+      )
+      .attr("y", (d, i) =>
+        localStorage.getItem(`rect${i}.icons.dy`) !== null
+          ? localStorage.getItem(`rect${i}.icons.dy`)
+          : d.y - 2
+      )
       .attr("width", 35)
       .attr("height", 35)
-      .attr("xlink:href", (d) => d?.image);
+      .attr("xlink:href", (d) => d.image);
 
-    const googleImg = svg
+    let googleImg = svg
       .selectAll("googleImg")
-      .data(graph.content)
+      .data(Graph.content)
       .enter()
       .append("image")
-      .attr("x", (d, i) => d.x + 95)
-      .attr("y", (d, i) => d.y + 40)
+      .attr("id", (d, i) => "rect" + i + ".googleImg")
+      .attr("x", (d, i) =>
+        localStorage.getItem(`rect${i}.googleImg.dx`) !== null
+          ? localStorage.getItem(`rect${i}.googleImg.dx`)
+          : d.x + 85
+      )
+      .attr("y", (d, i) =>
+        localStorage.getItem(`rect${i}.googleImg.dy`) !== null
+          ? localStorage.getItem(`rect${i}.googleImg.dy`)
+          : d.y + 40
+      )
       .attr("class", "googleImg")
       .attr("width", 55)
       .attr("height", 55)
-      .attr("href", (d) => d?.google);
+      .attr("href", (d) => d.google);
 
     const circle1 = svg
       .selectAll("circleImg1")
-      .data(graph.content)
+      .data(Graph.content)
       .enter()
       .append("image")
-      .attr("x", (d, i) => d.x + 99)
-      .attr("y", (d, i) => d.y + 60)
+      .attr("id", (d, i) => "rect" + i + ".circle1")
+      .attr("x", (d, i) =>
+        localStorage.getItem(`rect${i}.circle1.dx`) !== null
+          ? localStorage.getItem(`rect${i}.circle1.dx`)
+          : d.x + 99
+      )
+      .attr("y", (d, i) =>
+        localStorage.getItem(`rect${i}.circle1.dy`) !== null
+          ? localStorage.getItem(`rect${i}.circle1.dy`)
+          : d.y + 60
+      )
       .attr("class", "circleImg1")
       .attr("width", 25)
       .attr("height", 25)
@@ -129,11 +177,20 @@ function SVG() {
 
     const circleText1 = svg
       .selectAll("circleText1")
-      .data(graph.content)
+      .data(Graph.content)
       .enter()
       .append("text")
-      .attr("x", (d, i) => d.x + 99)
-      .attr("y", (d, i) => d.y + 95)
+      .attr("id", (d, i) => "rect" + i + ".circleText1")
+      .attr("x", (d, i) =>
+        localStorage.getItem(`rect${i}.circleText1.dx`) !== null
+          ? localStorage.getItem(`rect${i}.circleText1.dx`)
+          : d.x + 99
+      )
+      .attr("y", (d, i) =>
+        localStorage.getItem(`rect${i}.circleText1.dy`) !== null
+          ? localStorage.getItem(`rect${i}.circleText1.dy`)
+          : d.y + 95
+      )
       .attr("class", "circleText1")
       .style("font-size", "6px")
       .style("font-family", "Helvetica")
@@ -142,11 +199,20 @@ function SVG() {
 
     const circle2 = svg
       .selectAll("circleImg2")
-      .data(graph.content)
+      .data(Graph.content)
       .enter()
       .append("image")
-      .attr("x", (d, i) => d.x + 140)
-      .attr("y", (d, i) => d.y + 60)
+      .attr("id", (d, i) => "rect" + i + ".circle2")
+      .attr("x", (d, i) =>
+        localStorage.getItem(`rect${i}.circle2.dx`) !== null
+          ? localStorage.getItem(`rect${i}.circle2.dx`)
+          : d.x + 140
+      )
+      .attr("y", (d, i) =>
+        localStorage.getItem(`rect${i}.circle2.dy`) !== null
+          ? localStorage.getItem(`rect${i}.circle2.dy`)
+          : d.y + 60
+      )
       .attr("class", "circleImg2")
       .attr("width", 25)
       .attr("height", 25)
@@ -154,11 +220,20 @@ function SVG() {
 
     const circleText2 = svg
       .selectAll("circleText2")
-      .data(graph.content)
+      .data(Graph.content)
       .enter()
       .append("text")
-      .attr("x", (d, i) => d.x + 140)
-      .attr("y", (d, i) => d.y + 95)
+      .attr("id", (d, i) => "rect" + i + ".circleText2")
+      .attr("x", (d, i) =>
+        localStorage.getItem(`rect${i}.circleText2.dx`) !== null
+          ? localStorage.getItem(`rect${i}.circleText2.dx`)
+          : d.x + 140
+      )
+      .attr("y", (d, i) =>
+        localStorage.getItem(`rect${i}.circleText2.dy`) !== null
+          ? localStorage.getItem(`rect${i}.circleText2.dy`)
+          : d.y + 95
+      )
       .attr("class", "circleText2")
       .style("font-size", "6px")
       .style("font-family", "Helvetica")
@@ -167,11 +242,20 @@ function SVG() {
 
     const circle3 = svg
       .selectAll("circleImg3")
-      .data(graph.content)
+      .data(Graph.content)
       .enter()
       .append("image")
-      .attr("x", (d, i) => d.x + 180)
-      .attr("y", (d, i) => d.y + 60)
+      .attr("id", (d, i) => "rect" + i + ".circle3")
+      .attr("x", (d, i) =>
+        localStorage.getItem(`rect${i}.circle3.dx`) !== null
+          ? localStorage.getItem(`rect${i}.circle3.dx`)
+          : d.x + 180
+      )
+      .attr("y", (d, i) =>
+        localStorage.getItem(`rect${i}.circle3.dy`) !== null
+          ? localStorage.getItem(`rect${i}.circle3.dy`)
+          : d.y + 60
+      )
       .attr("class", "circleImg3")
       .attr("width", 25)
       .attr("height", 25)
@@ -179,11 +263,20 @@ function SVG() {
 
     const circleText3 = svg
       .selectAll("circleText3")
-      .data(graph.content)
+      .data(Graph.content)
       .enter()
       .append("text")
-      .attr("x", (d, i) => d.x + 180)
-      .attr("y", (d, i) => d.y + 95)
+      .attr("id", (d, i) => "rect" + i + ".circleText3")
+      .attr("x", (d, i) =>
+        localStorage.getItem(`rect${i}.circleText3.dx`) !== null
+          ? localStorage.getItem(`rect${i}.circleText3.dx`)
+          : d.x + 180
+      )
+      .attr("y", (d, i) =>
+        localStorage.getItem(`rect${i}.circleText3.dy`) !== null
+          ? localStorage.getItem(`rect${i}.circleText3.dy`)
+          : d.y + 95
+      )
       .attr("class", "circleText3")
       .style("font-size", "6px")
       .style("font-family", "Helvetica")
@@ -192,11 +285,20 @@ function SVG() {
 
     const circle4 = svg
       .selectAll("circleImg4")
-      .data(graph.content)
+      .data(Graph.content)
       .enter()
       .append("image")
-      .attr("x", (d, i) => d.x + 15)
-      .attr("y", (d, i) => d.y + 60)
+      .attr("id", (d, i) => "rect" + i + ".circle4")
+      .attr("x", (d, i) =>
+        localStorage.getItem(`rect${i}.circle4.dx`) !== null
+          ? localStorage.getItem(`rect${i}.circle4.dx`)
+          : d.x + 15
+      )
+      .attr("y", (d, i) =>
+        localStorage.getItem(`rect${i}.circle4.dy`) !== null
+          ? localStorage.getItem(`rect${i}.circle4.dy`)
+          : d.y + 60
+      )
       .attr("class", "circleImg4")
       .attr("width", 25)
       .attr("height", 25)
@@ -204,23 +306,42 @@ function SVG() {
 
     const circleText4 = svg
       .selectAll("circleText4")
-      .data(graph.content)
+      .data(Graph.content)
       .enter()
       .append("text")
-      .attr("x", (d, i) => d.x + 15)
-      .attr("y", (d, i) => d.y + 95)
+      .attr("id", (d, i) => "rect" + i + ".circleText4")
+      .attr("x", (d, i) =>
+        localStorage.getItem(`rect${i}.circleText4.dx`) !== null
+          ? localStorage.getItem(`rect${i}.circleText4.dx`)
+          : d.x + 15
+      )
+      .attr("y", (d, i) =>
+        localStorage.getItem(`rect${i}.circleText4.dy`) !== null
+          ? localStorage.getItem(`rect${i}.circleText4.dy`)
+          : d.y + 95
+      )
       .attr("class", "circleText4")
       .style("font-size", "6px")
       .style("font-family", "Helvetica")
       .style("font-weight", 400)
       .text((d) => d?.circle?.text4);
+
     const circle5 = svg
       .selectAll("circleImg5")
-      .data(graph.content)
+      .data(Graph.content)
       .enter()
       .append("image")
-      .attr("x", (d, i) => d.x + 60)
-      .attr("y", (d, i) => d.y + 60)
+      .attr("id", (d, i) => "rect" + i + ".circle5")
+      .attr("x", (d, i) =>
+        localStorage.getItem(`rect${i}.circle5.dx`) !== null
+          ? localStorage.getItem(`rect${i}.circle5.dx`)
+          : d.x + 60
+      )
+      .attr("y", (d, i) =>
+        localStorage.getItem(`rect${i}.circle5.dy`) !== null
+          ? localStorage.getItem(`rect${i}.circle5.dy`)
+          : d.y + 60
+      )
       .attr("class", "circleImg5")
       .attr("width", 25)
       .attr("height", 25)
@@ -228,11 +349,20 @@ function SVG() {
 
     const circleText5 = svg
       .selectAll("circleText5")
-      .data(graph.content)
+      .data(Graph.content)
       .enter()
       .append("text")
-      .attr("x", (d, i) => d.x + 60)
-      .attr("y", (d, i) => d.y + 95)
+      .attr("id", (d, i) => "rect" + i + ".circleText5")
+      .attr("x", (d, i) =>
+        localStorage.getItem(`rect${i}.circleText5.dx`) !== null
+          ? localStorage.getItem(`rect${i}.circleText5.dx`)
+          : d.x + 60
+      )
+      .attr("y", (d, i) =>
+        localStorage.getItem(`rect${i}.circleText5.dy`) !== null
+          ? localStorage.getItem(`rect${i}.circleText5.dy`)
+          : d.y + 95
+      )
       .attr("class", "circleText5")
       .style("font-size", "6px")
       .style("font-family", "Helvetica")
@@ -241,11 +371,20 @@ function SVG() {
 
     const circle6 = svg
       .selectAll("circleImg6")
-      .data(graph.content)
+      .data(Graph.content)
       .enter()
       .append("image")
-      .attr("x", (d, i) => d.x + 220)
-      .attr("y", (d, i) => d.y + 60)
+      .attr("id", (d, i) => "rect" + i + ".circle6")
+      .attr("x", (d, i) =>
+        localStorage.getItem(`rect${i}.circle6.dx`) !== null
+          ? localStorage.getItem(`rect${i}.circle6.dx`)
+          : d.x + 220
+      )
+      .attr("y", (d, i) =>
+        localStorage.getItem(`rect${i}.circle6.dy`) !== null
+          ? localStorage.getItem(`rect${i}.circle6.dy`)
+          : d.y + 60
+      )
       .attr("class", "circleImg6")
       .attr("width", 25)
       .attr("height", 25)
@@ -253,120 +392,308 @@ function SVG() {
 
     const circleText6 = svg
       .selectAll("circleText6")
-      .data(graph.content)
+      .data(Graph.content)
       .enter()
       .append("text")
-      .attr("x", (d, i) => d.x + 220)
-      .attr("y", (d, i) => d.y + 95)
+      .attr("id", (d, i) => "rect" + i + ".circleText6")
+      .attr("x", (d, i) =>
+        localStorage.getItem(`rect${i}.circleText6.dx`) !== null
+          ? localStorage.getItem(`rect${i}.circleText6.dx`)
+          : d.x + 220
+      )
+      .attr("y", (d, i) =>
+        localStorage.getItem(`rect${i}.circleText6.dy`) !== null
+          ? localStorage.getItem(`rect${i}.circleText6.dy`)
+          : d.y + 95
+      )
       .attr("class", "circleText6")
       .style("font-size", "6px")
       .style("font-family", "Helvetica")
       .style("font-weight", 400)
       .text((d) => d?.circle?.text6);
-    // svg
-    // .append("svg")
-    // .append("g")
-    // .attr("width", "600px")
-    // .attr("height", "200px")
-    // .attr("class", "newNode")
-    // .selectAll("newSVG")
-    // .data(graph.content[5].newCircles)
-    // .enter()
-    // .append("image")
-    // .attr("class", "newSVG")
-    // .attr("width", 30)
-    // .attr("height", 30)
-    // .attr("x", (d) => d?.x)
-    // .attr("y", (d) => d?.y)
-    // .attr("href", (d) => d?.node)
-    // .call(d3.drag().on("drag", dragged));
 
-    function dragged(event, d) {
-      d.x = event.x;
-      d.y = event.y;
-      d3.select(this).attr("x", d.x).attr("y", d.y);
-      text
-        .filter((t) => t.source === d)
-        .attr("x", d.x + 40)
-        .attr("y", d.y + 20);
-      icons
-        .filter((t) => t.source === d)
-        .attr("x", d.x + 2)
-        .attr("y", d.y - 2);
-      googleImg
-        .filter((t) => t.source === d)
-        .attr("x", d.x + 85)
-        .attr("y", d.y + 40);
+    async function dragged(event, d) {
+      //   console.log('event', event);
+      //   console.log('d', d);
+      if (
+        event.sourceEvent.target.id.length > 0 &&
+        event.sourceEvent.target.id.split(".").length === 1
+      ) {
+        d.x = event.x;
+        d.y = event.y;
+        await setValForAtt(event.sourceEvent.target.id, d, event);
+        d3.select(this).attr("x", d.x).attr("y", d.y);
 
-      circle1
-        .filter((t) => t.source === d)
-        .attr("x", d.x + 99)
-        .attr("y", d.y + 60);
+        link
+          .filter(function (l) {
+            return l.source === d;
+          })
+          .attr("x1", d.x + 70)
+          .attr("y1", d.y)
+          .filter(await setValForAtt("link1", d, event));
+        link
+          .filter(function (l) {
+            return l.target === d;
+          })
+          .attr("x2", d.x + 70)
+          .attr("y2", d.y + 10);
+        // .filter(await setValForAtt("link2", d, event));
 
-      circleText1
-        .filter((t) => t.source === d)
-        .attr("x", d.x + 99)
-        .attr("y", d.y + 95);
+        text
+          .filter((t) => t.source === d)
+          .attr("x", d.x + 40)
+          .attr("y", d.y + 20)
+          .filter(await setValForAtt("text", d, event));
+        icons
+          .filter((t) => t.source === d)
+          .attr("x", d.x + 2)
+          .attr("y", d.y - 2)
+          .filter(await setValForAtt("icons", d, event));
+        googleImg
+          .filter((t) => t.source === d)
+          .attr("x", d.x + 85)
+          .attr("y", d.y + 40)
+          .filter(await setValForAtt("googleImg", d, event));
 
-      circle2
-        .filter((t) => t.source === d)
-        .attr("x", d.x + 140)
-        .attr("y", d.y + 60);
+        circle1
+          .filter((t) => t.source === d)
+          .attr("x", d.x + 99)
+          .attr("y", d.y + 60)
+          .filter(await setValForAtt("circle1", d, event));
 
-      circleText2
-        .filter((t) => t.source === d)
-        .attr("x", d.x + 140)
-        .attr("y", d.y + 95);
+        circleText1
+          .filter((t) => t.source === d)
+          .attr("x", d.x + 99)
+          .attr("y", d.y + 95)
+          .filter(await setValForAtt("circleText1", d, event));
 
-      circle3
-        .filter((t) => t.source === d)
-        .attr("x", d.x + 180)
-        .attr("y", d.y + 60);
+        circle2
+          .filter((t) => t.source === d)
+          .attr("x", d.x + 140)
+          .attr("y", d.y + 60)
+          .filter(await setValForAtt("circle2", d, event));
 
-      circleText3
-        .filter((t) => t.source === d)
-        .attr("x", d.x + 180)
-        .attr("y", d.y + 95);
+        circleText2
+          .filter((t) => t.source === d)
+          .attr("x", d.x + 140)
+          .attr("y", d.y + 95)
+          .filter(await setValForAtt("circleText2", d, event));
 
-      circle4
-        .filter((t) => t.source === d)
-        .attr("x", d.x + 15)
-        .attr("y", d.y + 60);
+        circle3
+          .filter((t) => t.source === d)
+          .attr("x", d.x + 180)
+          .attr("y", d.y + 60)
+          .filter(await setValForAtt("circle3", d, event));
 
-      circleText4
-        .filter((t) => t.source === d)
-        .attr("x", d.x + 15)
-        .attr("y", d.y + 95);
-      circle5
-        .filter((t) => t.source === d)
-        .attr("x", d.x + 60)
-        .attr("y", d.y + 60);
+        circleText3
+          .filter((t) => t.source === d)
+          .attr("x", d.x + 180)
+          .attr("y", d.y + 95)
+          .filter(await setValForAtt("circleText3", d, event));
 
-      circleText5
-        .filter((t) => t.source === d)
-        .attr("x", d.x + 60)
-        .attr("y", d.y + 95);
-      circle6
-        .filter((t) => t.source === d)
-        .attr("x", d.x + 220)
-        .attr("y", d.y + 60);
+        circle4
+          .filter((t) => t.source === d)
+          .attr("x", d.x + 15)
+          .attr("y", d.y + 60)
+          .filter(await setValForAtt("circle4", d, event));
 
-      circleText6
-        .filter((t) => t.source === d)
-        .attr("x", d.x + 220)
-        .attr("y", d.y + 95);
-      link
-        .filter(function (l) {
-          return l.source === d;
-        })
-        .attr("x1", d.x + 70)
-        .attr("y1", d.y);
-      link
-        .filter(function (l) {
-          return l.target === d;
-        })
-        .attr("x2", d.x + 70)
-        .attr("y2", d.y + 10);
+        circleText4
+          .filter((t) => t.source === d)
+          .attr("x", d.x + 15)
+          .attr("y", d.y + 95)
+          .filter(await setValForAtt("circleText4", d, event));
+
+        circle5
+          .filter((t) => t.source === d)
+          .attr("x", d.x + 60)
+          .attr("y", d.y + 60)
+          .filter(await setValForAtt("circle5", d, event));
+
+        circleText5
+          .filter((t) => t.source === d)
+          .attr("x", d.x + 60)
+          .attr("y", d.y + 95)
+          .filter(await setValForAtt("circleText5", d, event));
+
+        circle6
+          .filter((t) => t.source === d)
+          .attr("x", d.x + 220)
+          .attr("y", d.y + 60)
+          .filter(await setValForAtt("circle6", d, event));
+
+        circleText6
+          .filter((t) => t.source === d)
+          .attr("x", d.x + 220)
+          .attr("y", d.y + 95)
+          .filter(await setValForAtt("circleText6", d, event));
+      }
+    }
+
+    async function setValForAtt(type, d, event) {
+      if (type === "link1") {
+        localStorage.setItem(
+          event.sourceEvent.target.id + ".link" + ".dx1",
+          d.x + 70
+        );
+        localStorage.setItem(
+          event.sourceEvent.target.id + ".link" + ".dy1",
+          d.y
+        );
+      } else if (type === "link2") {
+        localStorage.setItem(
+          event.sourceEvent.target.id + ".link" + ".dx2",
+          d.x + 50
+        );
+        localStorage.setItem(
+          event.sourceEvent.target.id + ".link" + ".dy2",
+          d.y + 10
+        );
+      } else if (type === "text") {
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dx",
+          d.x + 40
+        );
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dy",
+          d.y + 20
+        );
+      } else if (type === "icons") {
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dx",
+          d.x + 2
+        );
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dy",
+          d.y - 2
+        );
+      } else if (type === "googleImg") {
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dx",
+          d.x + 85
+        );
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dy",
+          d.y + 40
+        );
+      } else if (type === "circle1") {
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dx",
+          d.x + 99
+        );
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dy",
+          d.y + 60
+        );
+      } else if (type === "circleText1") {
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dx",
+          d.x + 99
+        );
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dy",
+          d.y + 95
+        );
+      } else if (type === "circle2") {
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dx",
+          d.x + 140
+        );
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dy",
+          d.y + 60
+        );
+      } else if (type === "circleText2") {
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dx",
+          d.x + 140
+        );
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dy",
+          d.y + 95
+        );
+      } else if (type === "circle3") {
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dx",
+          d.x + 180
+        );
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dy",
+          d.y + 60
+        );
+      } else if (type === "circleText3") {
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dx",
+          d.x + 180
+        );
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dy",
+          d.y + 95
+        );
+      } else if (type === "circle4") {
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dx",
+          d.x + 15
+        );
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dy",
+          d.y + 60
+        );
+      } else if (type === "circleText4") {
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dx",
+          d.x + 15
+        );
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dy",
+          d.y + 95
+        );
+      } else if (type === "circle5") {
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dx",
+          d.x + 60
+        );
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dy",
+          d.y + 60
+        );
+      } else if (type === "circleText5") {
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dx",
+          d.x + 60
+        );
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dy",
+          d.y + 95
+        );
+      } else if (type === "circle6") {
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dx",
+          d.x + 220
+        );
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dy",
+          d.y + 60
+        );
+      } else if (type === "circleText6") {
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dx",
+          d.x + 220
+        );
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dy",
+          d.y + 95
+        );
+      } else {
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dx",
+          d.x
+        );
+        localStorage.setItem(
+          event.sourceEvent.target.id + "." + type + ".dy",
+          d.y
+        );
+      }
+      return true;
     }
   }, []);
   return (
@@ -375,6 +702,6 @@ function SVG() {
       <div className="svg"></div>
     </div>
   );
-}
+};
 
 export default SVG;
