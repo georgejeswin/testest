@@ -2,6 +2,8 @@ import GoogleImg from "../images/google.png";
 import BlackIcon from "../images/black.png";
 import GreenIcon from "../images/green.png";
 import CircleImg from "../images/circle.png";
+import Cookies from "universal-cookie";
+const cookies = new Cookies();
 
 export default {
   content: [
@@ -9,7 +11,10 @@ export default {
       image: BlackIcon,
       google: GoogleImg,
       text: "Google",
-      x: 700,
+      x:
+        cookies.get("rect0.rect0.dx") !== null
+          ? cookies.get("rect0.rect0.dx")
+          : 500,
       y: 175,
       source: 200,
       target: 100,
