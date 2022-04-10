@@ -4,31 +4,23 @@ import GreenIcon from "../images/green.png";
 import CircleImg from "../images/circle.png";
 
 export default {
-  nodes: [
-    { x: 400, y: 175 },
-    { x: 200, y: 500 },
-    { x: 500, y: 500 },
-    { x: 800, y: 500 },
-    { x: 1100, y: 500 },
-    { x: 1400, y: 500 },
-  ],
   content: [
     {
       image: BlackIcon,
       google: GoogleImg,
       text: "Google",
-      x: 400,
+      x: 700,
       y: 175,
-      source: 0,
-      target: 0,
+      source: 200,
+      target: 100,
     },
     {
       image: GreenIcon,
       text: "New York-Sites",
       x: 200,
       y: 500,
-      source: 1,
-      target: 0,
+      source: 200,
+      target: 700,
       circle: { img1: CircleImg, text1: "Q2KN-M" },
     },
     {
@@ -36,7 +28,7 @@ export default {
       text: "New Jersey-Sites",
       x: 500,
       y: 500,
-      source: 2,
+      source: 300,
       target: 0,
       circle: { img1: CircleImg, text1: "Q2KN-G" },
     },
@@ -45,8 +37,8 @@ export default {
       text: "Vermont-Sites",
       x: 800,
       y: 500,
-      source: 3,
-      target: 0,
+      source: 300,
+      target: 100,
       circle: { img1: CircleImg, text1: "Q2KN-G" },
     },
     {
@@ -54,8 +46,8 @@ export default {
       text: "Massachusetts-Sites",
       x: 1100,
       y: 500,
-      source: 4,
-      target: 0,
+      source: 400,
+      target: 100,
       circle: {
         img1: CircleImg,
         img2: CircleImg,
@@ -68,8 +60,8 @@ export default {
       text: "California-Sites",
       x: 1400,
       y: 500,
-      source: 5,
-      target: 0,
+      source: 500,
+      target: 100,
       circle: {
         img1: CircleImg,
         img2: CircleImg,
